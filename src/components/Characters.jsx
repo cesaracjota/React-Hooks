@@ -1,17 +1,35 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext, useReducer} from 'react';
 
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { CardActionArea } from '@mui/material';
-
 import { experimentalStyled as styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+
+import ThemeContext from '../context/ThemeContext';
+
+const initialState = {
+  favorites: [],
+}
+
+const favoritesReducer = (state, action) => {
+  switch (action.type) {
+    case 'ADD_TO_FAVORITE':
+      return {
+        ...state,
+        favorites: [...state.favorites, action.payload]
+      };
+      default:
+        return state;
+  }
+}
 
 const Characters = () => {
 
@@ -23,7 +41,15 @@ const Characters = () => {
     color: theme.palette.text.secondary,
   }));
 
+  const color = useContext(ThemeContext);
+
   const [characters, setCharacters] = useState([]);
+
+  const [ favorites, dispatch] = useReducer(favoritesReducer, initialState);
+
+  const handleClick = favorite => {
+    dispatch({ type: 'ADD_TO_FAVORITE', payload: favorite });
+  }
 
   useEffect(() => {
     fetch('https://rickandmortyapi.com/api/character/')
@@ -33,12 +59,18 @@ const Characters = () => {
 
   return ( 
     <div className='Characters'>
-    <Box sx={{ flexGrow: 1, p: 1, borderRadius: '20px' }}>
+      {favorites.favorites.map(favorite =>{
+        <li key={favorite.id}>
+            <h1>{favorite.name}</h1>
+            {console.log(favorite.name)}
+        </li>
+      })}
+    <Box sx={{ flexGrow: 1, p: 1, borderRadius: '20px' }} style={{color}}>
       <Grid container spacing={{ xs: 2, sm: 4, md: 4, lg:6 }} row={{ xs: 1, sm: 2, md: 3, lg:4 }}>
         {characters.map(character => (
           <Grid item xs={12} sm={6} md={4} lg={4} key={character.id}>
             <Item>
-            <Card sx={{ maxWidth: 345 }} variant="outlined">
+            <Card sx={{ maxWidth: 345, paddingBottom: 2  }} variant="outlined">
               <CardActionArea>
                 <CardMedia
                   component="img"
@@ -58,6 +90,7 @@ const Characters = () => {
                   </Stack>
                 </CardContent>
               </CardActionArea>
+              <Button variant="contained" type='button' size="small" color="primary" onClick={()=> handleClick(character)}> agregar a favoritos</Button>
               </Card>
             </Item>
           </Grid>

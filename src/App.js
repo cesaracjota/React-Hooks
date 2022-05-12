@@ -9,7 +9,7 @@ function App() {
   return (
     <React.Fragment>
       <CssBaseline />
-      <Header className="dark-theme-nav" />
+      <Header/>
       <Container maxWidth="lg">
         <Characters/>
       </Container>

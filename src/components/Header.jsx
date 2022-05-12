@@ -1,30 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import Button from '@mui/material/Button';
-import { useTheme, ThemeProvider, createTheme } from '@mui/material/styles';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import '../App.css';
-
-const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
+import ThemeContext from '../context/ThemeContext';
 
 const Header = () => {
-  const theme = useTheme();
   const [darkMode, setDarkMode] = useState(localStorage.getItem("theme") === "dark" ? true : false);
   document.getElementsByTagName("HTML")[0].setAttribute("data-theme",localStorage.getItem("theme"));
-  const colorMode = React.useContext(ColorModeContext);
+
+  const color = useContext(ThemeContext);
+
 
   const handleClick = () => {
     setDarkMode(!darkMode); //estamos retomando el valor del valor inicial
   }
 
   return ( 
-    <Box sx={{ flexGrow: 1 }} darkMode={ colorMode }>
+    <Box sx={{ 
+      flexGrow: 1,
+      bgColor: '#fff',
+      color: 'text.primary',
+       }}>
     <AppBar position="static">
       <Toolbar>
         <IconButton size="large" edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
@@ -34,7 +36,7 @@ const Header = () => {
           React Hooks
         </Typography>
 
-        <Typography color="inherit" >
+        <Typography color={darkMode? color : '#fff'} >
           {darkMode ? 'Light Mode' : 'Dark Mode'}
         </Typography>
         <IconButton sx={{ ml: 1 }} onClick={handleClick} color="inherit">
